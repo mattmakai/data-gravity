@@ -22,6 +22,7 @@ def github_follower_count(username):
         db.session.commit()
     return resp.status_code
 
+
 @celery.task
 def get_wc(content_dir):
     """

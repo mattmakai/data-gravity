@@ -20,4 +20,4 @@ login_manager = LoginManager()
 #login_manager.login_view = 'signin'
 celery = make_celery(app)
 
-from . import views, tasks #, websockets
+from . import views, admin, tasks #, websockets

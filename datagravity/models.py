@@ -62,6 +62,15 @@ class User(UserMixin, db.Model):
     def __repr__(self):
         return '<User %r>' % self.email
 
+class Developer(db.Model):
+    """
+        All the things you do and do not want to display to your adoring
+        software development fans.
+    """ 
+    __table_name__ = 'developer'
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(200))
+
 
 class Follower(db.Model):
     """

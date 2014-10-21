@@ -15,9 +15,11 @@ redis_db = redis.StrictRedis(host=REDIS_SERVER, port=REDIS_PORT, db=REDIS_DB)
 
 socketio = SocketIO(app)
 db = SQLAlchemy(app)
-login_manager = LoginManager()
 
-#login_manager.login_view = 'signin'
+login_manager = LoginManager()
+login_manager.login_view = 'signin'
+login_manager.init_app(app)
+
 celery = make_celery(app)
 
 from . import views, admin, tasks #, websockets

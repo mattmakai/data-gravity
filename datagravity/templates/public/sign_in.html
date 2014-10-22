@@ -6,7 +6,7 @@
         <div id="login">
             <h1>Sign In</h1>
             {% from "partials/_formhelpers.html" import render_field %}
-            <form method="post" action="{{ url_for('signin') }}" 
+            <form method="post" action="{{ url_for('sign_in') }}" 
                   id="login-form">
                 {{ form.csrf_token }}
                 {{ render_field(form.email, required=True) }}

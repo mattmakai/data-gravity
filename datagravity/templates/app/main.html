@@ -1,0 +1,12 @@
+{% extends "base.html" %}
+
+{% block content %}
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-md-4">
+                GitHub: {{ github_followers.count }}
+                <a href="/refresh/github/" class="btn btn-success">Refresh</a>
+            </div>
+        </div>
+    </div>
+{% endblock %}

@@ -70,6 +70,7 @@ class Developer(db.Model):
     __table_name__ = 'developer'
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(200))
+    status = db.Column(db.String(200))
 
 
 class Follower(db.Model):
@@ -95,7 +96,7 @@ class Service(db.Model):
     """
     __tablename__ = 'service'
     id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.String(100))
+    name = db.Column(db.String(100), unique=True)
     site_url = db.Column(db.String(1024))
     followers = db.relationship('Follower', backref='followers',
                                 lazy='dynamic')

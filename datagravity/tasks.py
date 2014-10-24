@@ -1,8 +1,9 @@
 import requests
-from datetime import timedelta
+from datetime import datetime, timedelta
 from celery.decorators import periodic_task
 import sh
 from sh import cd, find, wc, cat
+from sqlalchemy import and_
 
 from .models import Follower, Service
 from datagravity import app, db, celery
@@ -16,9 +17,20 @@ def github_follower_count(username):
     """
     service = Service.query.filter(Service.name=='GitHub')[0]
     resp = requests.get('https://api.github.com/users/%s' % username)
+    # real pretty code here
+    td = datetime.today()
+    today = datetime(year=td.year, month=td.month, day=td.day)
+    yesterday = today - timedelta(days=1)
+    tomorrow = today + timedelta(days=1)
     if resp.status_code == requests.codes['OK']:
-        f = Follower(service, resp.json()['followers'])
-        db.session.add(f)
+        try:
+            f = Follower.query.filter(and_(Follower.timestamped>yesterday,
+                Follower.timestamped<tomorrow)).all()[0]
+            f.count = resp.json()['followers']
+            db.session.merge(f)
+        except Exception as e:
+            f = Follower(service, resp.json()['followers'])
+            db.session.add(f)
         db.session.commit()
     return resp.status_code
 

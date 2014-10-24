@@ -16,4 +16,3 @@ def load(db):
         followers.append(f)
         db.session.add(f)
     db.session.commit()
-

@@ -46,3 +46,8 @@ CELERYBEAT_SCHEDULE = {
         'args': (get_env_setting('GITHUB_USERNAME'), )
     }
 }
+
+# Google API credentials
+GOOGLE_CLIENT_SID = get_env_setting('GOOGLE_CLIENT_SID')
+GOOGLE_CLIENT_SECRET = get_env_setting('GOOGLE_CLIENT_SECRET')
+GOOGLE_REDIRECT_URL = get_env_setting('GOOGLE_REDIRECT_URL')

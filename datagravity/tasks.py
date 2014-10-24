@@ -4,8 +4,12 @@ from celery.decorators import periodic_task
 import sh
 from sh import cd, find, wc, cat
 from sqlalchemy import and_
+    
+from requests_oauthlib import OAuth2Session
 
 from .models import Follower, Service
+from .config import GOOGLE_CLIENT_SID, GOOGLE_CLIENT_SECRET, \
+                    GOOGLE_REDIRECT_URL
 from datagravity import app, db, celery
 
 
@@ -33,6 +37,25 @@ def github_follower_count(username):
             db.session.add(f)
         db.session.commit()
     return resp.status_code
+
+
+def google_api_hit():
+    authorization_base_url = "https://accounts.google.com/o/oauth2/auth"
+    token_url = "https://accounts.google.com/o/oauth2/token"
+    scope = [
+        "https://www.googleapis.com/auth/userinfo.email",
+        "https://www.googleapis.com/auth/userinfo.profile"
+    ]
+    google = OAuth2Session(GOOGLE_CLIENT_SID, scope=scope, 
+        redirect_uri=GOOGLE_REDIRECT_URL)
+    authorization_url, state = google.authorization_url(authorization_base_url,
+        access_type="offline", approval_prompt="force")
+    print 'Please go here and authorize,', authorization_url
+    redirect_response = raw_input('Paste the full redirect URL here:')
+    google.fetch_token(token_url, client_secret=GOOGLE_CLIENT_SECRET,
+        authorization_response=redirect_response)
+    r = google.get('https://www.googleapis.com/oauth2/v1/userinfo')
+    print r.content
 
 
 @celery.task

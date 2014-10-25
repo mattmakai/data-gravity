@@ -36,6 +36,7 @@ class User(UserMixin, db.Model):
     email = db.Column(db.String(64), unique=True, index=True)
     role_id = db.Column(db.Integer, db.ForeignKey('roles.id'))
     password_hash = db.Column(db.String(128))
+    google_access_token = db.Column(db.String(512))
 
     def __init__(self, email, password):
         self.email = email

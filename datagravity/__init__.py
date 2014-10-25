@@ -17,7 +17,7 @@ socketio = SocketIO(app)
 db = SQLAlchemy(app)
 
 login_manager = LoginManager()
-login_manager.login_view = 'signin'
+login_manager.login_view = 'sign_in'
 login_manager.init_app(app)
 
 celery = make_celery(app)

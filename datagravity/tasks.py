@@ -7,7 +7,7 @@ from sqlalchemy import and_
     
 from requests_oauthlib import OAuth2Session
 
-from .models import Follower, Service
+from .models import Follower, Service, DayInput
 from .config import GOOGLE_CLIENT_SID, GOOGLE_CLIENT_SECRET, \
                     GOOGLE_REDIRECT_URL
 from datagravity import app, db, celery
@@ -37,13 +37,25 @@ def add_or_replace_follower_count(service, count):
         f = Follower.query.filter(and_(and_(Follower.timestamped>yesterday,
             Follower.timestamped<tomorrow), 
             Follower.service==service.id)).all()[0]
-        print f
         f.count = count
-        db.session.merge(f)
+    except Exception as e:
+        f = Follower(service, count)
+    db.session.merge(f)
+    db.session.commit()
+
+
+def add_or_replace_day_tracker(year, month, day, track):
+    find_date = datetime(year=year, month=month, day=day)
+    yesterday = find_date - timedelta(days=1)
+    tomorrow = find_date + timedelta(days=1)
+    try:
+        di = DayInput.query.filter(and_(DayInput.timestamped>yesterday,
+            DayInput.timestamped<tomorrow)).all()[0]
+        di.__setattr__(track, not di.__getattribute__(track))
     except Exception as e:
         print e
-        f = Follower(service, count)
-        db.session.add(f)
+        di = DayInput(find_date)
+    db.session.merge(di)
     db.session.commit()
 
 

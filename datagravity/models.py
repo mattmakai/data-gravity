@@ -90,6 +90,20 @@ class Follower(db.Model):
         self.timestamped = timestamp
 
 
+class DayInput(db.Model):
+    """
+        A single day of things I want to track.
+    """
+    __tablename__ = 'dayinput'
+    id = db.Column(db.Integer, primary_key=True)
+    timestamped = db.Column(db.DateTime)
+    workout = db.Column(db.Boolean, default=False)
+    newsletter = db.Column(db.Boolean, default=False)
+    
+    def __init__(self, create_date):
+        self.timestamped = create_date
+    
+
 class Service(db.Model):
     """
         Represents a service that is being tracked by the user,

@@ -1,6 +1,7 @@
 import json
 import requests
 
+from datetime import datetime
 from flask import request, render_template, jsonify, redirect, url_for
 from flask.ext.login import login_user, logout_user, login_required, \
                             current_user
@@ -9,7 +10,8 @@ from requests_oauthlib import OAuth2Session
 from . import app, db, login_manager, redis_db, socketio
 from .forms import LoginForm
 from .models import User, Developer, Follower, Service
-from .tasks import github_follower_count, add_or_replace_follower_count
+from .tasks import github_follower_count, add_or_replace_follower_count, \
+                   add_or_replace_day_tracker
 from .config import GOOGLE_CLIENT_SID, GOOGLE_CLIENT_SECRET, \
                     GOOGLE_REDIRECT_URL
 
@@ -32,6 +34,8 @@ def load_user(userid):
 
 @app.route('/', methods=['GET'])
 def public_view():
+    if current_user.is_authenticated:
+        return redirect(url_for('main'))
     return redirect(url_for('sign_in'))
 
 
@@ -43,7 +47,14 @@ def sign_in():
         if user is not None and user.verify_password(form.password.data):
             login_user(user)
             return redirect(url_for('main'))
-    return render_template('public/sign_in.html', form=form)
+    return render_template('public/sign_in.html', form=form, no_nav=True)
+
+
+@app.route('/sign-out/')
+@login_required
+def sign_out():
+    logout_user()
+    return redirect(url_for('public_view'))
 
 
 @app.route('/app/', methods=['GET'])
@@ -56,7 +67,22 @@ def main():
     gmail_emails = Follower.query.filter_by(service=google.id).order_by( \
         Follower.timestamped.desc()).first()
     return render_template('app/main.html', github_followers=gh_followers,
-                           gmail_emails=gmail_emails)
+                           gmail_emails=gmail_emails, today=datetime.now())
+
+@app.route('/app/day/<int:year>/<int:month>/<int:day>/', 
+           methods=['GET'])
+@login_required
+def day(year, month, day):
+    return render_template('app/day.html', year=year, month=month, day=day,
+                           today=datetime.now())
+
+
+@app.route('/app/day/toggle/<int:year>/<int:month>/<int:day>/<tracker>/', 
+           methods=['GET'])
+@login_required
+def day_toggle(year, month, day, tracker):
+    add_or_replace_day_tracker(year, month, day, tracker)
+    return 'OK'
 
 
 @app.route('/app/authorize-apis/', methods=['GET'])
@@ -65,7 +91,8 @@ def authorize_apis():
         redirect_uri=GOOGLE_REDIRECT_URL)
     authorization_url, state = google.authorization_url(authorization_base_url,
         access_type="offline", approval_prompt="force")
-    return render_template('app/authorize.html', google_url=authorization_url)
+    return render_template('app/authorize.html', google_url=authorization_url,
+                           today=datetime.now())
 
 
 @app.route('/oauth2callback', methods=['GET'])

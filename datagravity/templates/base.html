@@ -9,6 +9,9 @@
     <link rel="icon" href="../../favicon.ico">
     <title>{% block title %}{% endblock %}Data Gravity</title>
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css">
+    <style>
+        .btn-huge {padding: 10px 25px 10px 25px; font-size: 2em; margin: 10px;}
+    </style>
     {% block css_head %}{% endblock %}
     <!-- IE10 viewport hack for Surface/desktop Windows 8 bug -->
     <!-- <script src="../../js/ie10-viewport-bug-workaround.js"></script> -->
@@ -20,6 +23,9 @@
     <![endif]-->
   </head>
   <body>
+    {% if not no_nav %}
+        {% include "nav.html" %}
+    {% endif %}
     {% block content %}{% endblock %}
     <script type="text/javascript" src="https://code.jquery.com/jquery-1.11.1.min.js"></script>
      <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/socket.io/0.9.16/socket.io.min.js"></script>

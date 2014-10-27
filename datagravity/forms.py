@@ -20,4 +20,3 @@ class LoginForm(Form):
             self.password.errors.append('Incorrect password.')
             return False
         return True
-

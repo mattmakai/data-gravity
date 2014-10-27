@@ -5,7 +5,7 @@ monkey.patch_all()
 import os
 
 from datagravity import app, db, redis_db, celery, socketio
-from datagravity.models import User, Service, Follower, Developer
+from datagravity.models import User, Service, Follower, Developer, DayInput
 from flask.ext.script import Manager, Shell
 from loader import load
 
@@ -14,7 +14,7 @@ manager = Manager(app)
 def make_shell_context():
     return dict(app=app, db=db, redis_db=redis_db, celery=celery,
                 User=User, Service=Service, Follower=Follower,
-                Developer=Developer)
+                Developer=Developer, DayInput=DayInput)
 
 manager.add_command("shell", Shell(make_context=make_shell_context))
 

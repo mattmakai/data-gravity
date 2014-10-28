@@ -46,18 +46,28 @@ def add_or_replace_follower_count(service, count):
 
 def add_or_replace_day_tracker(year, month, day, track):
     find_date = datetime(year=year, month=month, day=day)
-    yesterday = find_date - timedelta(days=1)
-    tomorrow = find_date + timedelta(days=1)
-    try:
-        di = DayInput.query.filter(and_(DayInput.timestamped>yesterday,
-            DayInput.timestamped<tomorrow)).all()[0]
-        di.__setattr__(track, not di.__getattribute__(track))
-    except Exception as e:
-        print e
+    di = find_day_input(year, month, day)
+    if not di:
         di = DayInput(find_date)
+    di.__setattr__(track, not di.__getattribute__(track))
     db.session.merge(di)
     db.session.commit()
 
+
+def find_day_input(year, month, day):
+    """
+        Obtains DayInput with that date or returns False if not found.
+    """
+    find_date = datetime(year=year, month=month, day=day)
+    yesterday = find_date - timedelta(days=1)
+    tomorrow = find_date + timedelta(days=1)
+    try:
+        return DayInput.query.filter(and_(DayInput.timestamped>yesterday,
+            DayInput.timestamped<tomorrow)).all()[0]
+    except Exception as e:
+        print e
+        return False
+    
 
 @celery.task
 def get_wc(content_dir):

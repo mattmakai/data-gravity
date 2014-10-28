@@ -9,9 +9,9 @@ from requests_oauthlib import OAuth2Session
 
 from . import app, db, login_manager, redis_db, socketio
 from .forms import LoginForm
-from .models import User, Developer, Follower, Service
+from .models import User, Developer, Follower, Service, DayInput
 from .tasks import github_follower_count, add_or_replace_follower_count, \
-                   add_or_replace_day_tracker
+                   add_or_replace_day_tracker, find_day_input
 from .config import GOOGLE_CLIENT_SID, GOOGLE_CLIENT_SECRET, \
                     GOOGLE_REDIRECT_URL
 
@@ -73,8 +73,12 @@ def main():
            methods=['GET'])
 @login_required
 def day(year, month, day):
+    find_date = datetime(year=year, month=month, day=day)
+    di = find_day_input(year, month, day)
+    if not di:
+        di = DayInput(find_date)
     return render_template('app/day.html', year=year, month=month, day=day,
-                           today=datetime.now())
+                           today=datetime.now(), di=di)
 
 
 @app.route('/app/day/toggle/<int:year>/<int:month>/<int:day>/<tracker>/', 

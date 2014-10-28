@@ -4,14 +4,10 @@
     <div class="container">
         <div class="row">
             <div class="col-md-12">
-                <div class="btn-group">
-                    <button data-toggle="button" class="btn btn-huge btn-danger"
+                    <button class="btn btn-huge {% if di.workout %}btn-success{% else %}btn-danger{% endif %}"
                             id="workout">Workout</button> 
-                </div>
-                <div class="btn-group">
-                    <button data-toggle="button" class="btn btn-huge btn-danger"
+                    <button class="btn btn-huge {% if di.newsletter %}btn-success{% else %}btn-danger{% endif %}"
                             id="newsletter">Newsletter</button> 
-                </div>
             </div>
         </div>
     </div>

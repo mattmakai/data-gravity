@@ -104,6 +104,17 @@ class DayInput(db.Model):
         self.timestamped = create_date
     
 
+class Writing(db.Model):
+    """
+        A discrete piece of writing, such as a blog post or article.
+    """
+    __table__name = 'writing'
+    id = db.Column(db.Integer, primary_key=True)
+    timestamped = db.Column(db.DateTime)
+    title = db.Column(db.String(1024))
+    url = db.Column(db.String(2048))
+
+
 class Service(db.Model):
     """
         Represents a service that is being tracked by the user,

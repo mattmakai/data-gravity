@@ -27,10 +27,10 @@ scope = [
 ]
 
 
+
 @login_manager.user_loader
 def load_user(userid):
     return User.query.get(int(userid))
-
 
 @app.route('/', methods=['GET'])
 def public_view():
